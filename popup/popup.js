@@ -1,5 +1,11 @@
 'use strict'
 
+
+document.getElementById("button-support").addEventListener("click", function (e) {
+  chrome.tabs.create({url: '../support/support.html'});
+
+});
+
 const DEBUG = true
 let state = {};
 
