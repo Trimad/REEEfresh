@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="bootstrap.css">
+  <script src="bootstrap.bundle.js"></script>
+  <style>
+    body {
+      /* text-align: center; */
+      width: 512px;
+      /* outline: #80DEEA dotted thick; */
+      padding: 5px;
+
+    }
+
+    /* #hydrateImage {
+      width: 400px;
+      margin: 1em;
+    }
+
+    button {
+      margin: 5px;
+      outline: none;
+    }
+
+    button:hover {
+      outline: #80DEEA dotted thick;
+    } */
+  </style>
+
+</head>
+
+<body>
+
+  <!-- REFRESH TAB -->
+  <h1 class="display-6">Refresh an Entire Tab</h1>
+  <div class="input-group">
+    <div class="input-group-text">
+      <div class="form-check form-switch">
+        <input id="checkbox-refresh-tab" class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="checkbox-refresh-tab">Refresh Tab</label>
+      </div>
+    </div>
+    <input id="input-refresh-tab" type="number" class="form-control">
+    <button id="button-refresh-tab" class="btn btn-dark btn-square-sm"
+      style="border-radius: 0px 3px 3px 0px    !important;">Update</button>
+  </div>
+  <!-- REFRESH SALESFORCE -->
+  <h1 class="display-6">Refresh a Salesforce List View</h1>
+  <div class="input-group">
+    <div class="input-group-text">
+      <div class="form-check form-switch">
+        <input id="refresh-salesforce-checkbox" class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="refresh-salesforce-checkbox">Refresh SalesForce</label>
+      </div>
+    </div>
+    <input id="refresh-salesforce-seconds" type="number" class="form-control">
+    <button id="refresh-salesforce-button" class="btn btn-dark btn-square-sm"
+      style="border-radius: 0px 3px 3px 0px    !important;">Update</button>
+  </div>
+  <!-- SCRIPTS -->
+  <script src="popup.js"></script>
+</body>
+
+</html>

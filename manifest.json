@@ -1,0 +1,34 @@
+{
+  "name": "REEEfresh",
+  "description": "A refreshing browser extension for SalesForce users.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Refresh every N seconds!"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "images/logo-16x.png",
+    "32": "images/logo-32x.png",
+    "48": "images/logo-48x.png",
+    "128": "images/logo-128x.png"
+  }
+}
