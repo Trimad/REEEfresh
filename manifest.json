@@ -1,10 +1,10 @@
 {
-  "name": "REEEfresh",
   "description": "A refreshing browser extension for SalesForce users.",
-  "version": "1.0",
+  "default_locale": "en",
   "manifest_version": 3,
+  "name": "REEEfresh",
+  "version": "1.0",
   "permissions": [
-    "alarms",
     "notifications",
     "storage",
     "tabs"
