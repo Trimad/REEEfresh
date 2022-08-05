@@ -1,6 +1,6 @@
 'use strict'
 
-const DEBUG = true
+const DEBUG = false
 let state = {};
 
 //SUPPORT BUTTON $$$
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('refresh-salesforce-checkbox').checked = state.salesforcechecked;
         document.getElementById('refresh-salesforce-seconds').value = state.salesforcevalue;
     });
+    update()
 });
-
 
 function getTabID() {
     return new Promise((resolve, reject) => {
@@ -53,7 +53,7 @@ async function update() {
     state = Object.assign(state, {
         tabId: responseTabID
     })
-    console.log(state);
+
     try { chrome.storage.sync.set(state) } catch (w) {
         if (DEBUG) console.warn(w)
     }

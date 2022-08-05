@@ -1,5 +1,4 @@
-const DEBUG = true
-console.log("content.js loaded")
+const DEBUG = false
 
 chrome.runtime.onMessage.addListener(gotMessage)
 
@@ -24,7 +23,7 @@ function gotMessage(message, sender, sendResponse) {
         `//*[@id="brandBand_1"]/div/div/div/div/div[1]/div[2]/div[3]/force-list-view-manager-button-bar/div/div[1]/lightning-button-icon/button`//list view
     ]
     var querySelector = [`button[title='Refresh this feed']`]//case chatter
-    var classes = [];
+    //var classes = [];
 
     if (button == null)//if a button hasn't been found yet
         for (x of xPaths) {
@@ -36,14 +35,14 @@ function gotMessage(message, sender, sendResponse) {
             try { button = document.querySelector(q) } catch (e) { }
             if (button) { break }
         }
-    if (button == null)//if a button hasn't been found yet
-        for (c of classes) {
-            try { button = document.getElementsByClassName(c)[0] } catch (e) { }
-            if (button) { break }
-        }
+    // if (button == null)//if a button hasn't been found yet
+    //     for (c of classes) {
+    //         try { button = document.getElementsByClassName(c)[0] } catch (e) { }
+    //         if (button) { break }
+    //     }
     if (button == null) {
-        console.warn('NO BUTTON DETECTED')
-    } else { console.log(button) }
+        if (DEBUG) console.warn('NO BUTTON DETECTED')
+    } else { if (DEBUG) console.log(button) }
     clearInterval(salesforceInterval)
     if (button && message.salesforcechecked) {
         if (DEBUG) { console.log("SET INTERVAL TRIGGERED") }
@@ -52,7 +51,7 @@ function gotMessage(message, sender, sendResponse) {
             salesforceSeconds++
             var date = new Date(0);
             date.setSeconds(message.salesforcevalue - salesforceSeconds)
-            var result = date.getMinutes() + 'm\n' + date.getSeconds()+'s'
+            var result = date.getMinutes() + 'm\n' + date.getSeconds() + 's'
             button.innerHTML = result
             if (salesforceSeconds == parseInt(message.salesforcevalue)) { button.click(); salesforceSeconds = 0; console.log("REFRESH TRIGGERED"); }
         }, 1000)
