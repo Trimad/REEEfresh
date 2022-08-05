@@ -58,7 +58,7 @@ function gotMessage(message, sender, sendResponse) {
         }, 1000)
     } else if (button && !message.salesforcechecked) {
         if (DEBUG) { console.log("CLEAR INTERVAL TRIGGERED") }
-        button.innerHTML = "🛑"
+        button.innerHTML = "🐸"
 
         clearInterval(salesforceInterval)
         salesforceSeconds = 0
