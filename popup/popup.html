@@ -6,36 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="bootstrap.css">
   <script src="bootstrap.bundle.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
   <style>
     body {
       width: 420px;
       padding: 0px;
     }
-
   </style>
 
 </head>
 
 <body>
   <div class="card" style="border-radius:0px">
-
     <div class="card-header center-block" style="padding: 5px;">
       <div class="input-group" style="width:100%">
         <button type="button" id="button-support" class="btn btn-dark btn-sm">
           <i class="bi bi-patch-question" style="font-size: 1.5rem"></i>
         </button>
         <div class="input-group-text align-middle" id="feedback">
-
         </div>
-
       </div>
     </div>
     <div class="card-body" style="padding: 5px;">
-
-
       <!-- REFRESH TAB -->
-
       <h1 class="display-6">Refresh Entire Tab</h1>
       <div class="input-group">
         <div class="input-group-text">
@@ -47,7 +41,6 @@
         <input id="refresh-tab-seconds" type="number" class="form-control">
         <button type="button" id="refresh-tab-button" class="btn btn-dark btn-square-sm"
           style="border-radius: 0px 3px 3px 0px    !important;">Update</button>
-
       </div>
       <!-- REFRESH SALESFORCE -->
       <h1 class="display-6">Refresh Salesforce List View</h1>
@@ -65,7 +58,9 @@
     </div>
   </div>
   <!-- SCRIPTS -->
-  <script src="popup.js"></script>
+  <script type=”module” type="text/javascript" src="../shared.js"></script>
+  <script type="text/javascript" src="popup.js">
+  </script>
 
   <!-- <label for="refresh-tab-checkbox"></label>
   <label for="refresh-tab-seconds"></label>
@@ -74,7 +69,5 @@
   <label for="refresh-salesforce-seconds"></label>
   <label for="refresh-salesforce-button"></label> -->
 </body>
-
-
 
 </html>

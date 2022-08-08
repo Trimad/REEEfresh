@@ -4,16 +4,17 @@
   "name": "REEEfresh",
   "version": "1.0",
   "permissions": [
-    "notifications",
     "storage",
     "tabs"
   ],
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "Refresh every N seconds!"
+    "default_title": "Refresh every N seconds!",
+    "type": "module"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
