@@ -39,6 +39,14 @@ async function saveState(key) {
     });
 };
 
+const stateSchema = {
+    checked: false,
+    value: null,
+    tabId: null,
+    salesforcechecked: false,
+    salesforcevalue: null,
+  }
+
 async function injectScript() {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     await chrome.scripting.executeScript({
@@ -48,4 +56,4 @@ async function injectScript() {
     window.close();
 }
 
-export { getTabID, loadState, saveState }
+export { getTabID, loadState, saveState}

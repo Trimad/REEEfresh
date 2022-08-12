@@ -8,15 +8,19 @@ function gotMessage(message, sender, sendResponse) {
     if (DEBUG) console.log(message, sender, sendResponse)
 
     //PAGE REFRESH
-    if (message.checked) {
-        const element = document.getElementById('refresh-page')
-        if (element) element.remove()
-        var meta = "<meta http-equiv=\"refresh\" id=\"refresh-page\" content=\"" + message.value + "\">"
-        document.head.innerHTML += meta
-    } else {
-        const element = document.getElementById('refresh-page')
-        if (element) { element.remove() }
-    }
+
+    try {
+        if (message.checked) {
+            const element = document.getElementById('refresh-page')
+            if (element) element.remove()
+            var meta = "<meta http-equiv=\"refresh\" id=\"refresh-page\" content=\"" + message.value + "\">"
+            document.head.innerHTML += meta
+        } else {
+            const element = document.getElementById('refresh-page')
+            if (element) { element.remove() }
+        }
+    } catch (e) { console.warn(e) }
+
     // SALESFORCE REFRESH
     var button = null;
     var xPaths = [
@@ -41,11 +45,10 @@ function gotMessage(message, sender, sendResponse) {
     //         if (button) { break }
     //     }
     if (button == null) {
-        if (DEBUG) console.warn('NO BUTTON DETECTED')
+        if (DEBUG) console.warn('NO SALESFORCE BUTTON DETECTED')
     } else { if (DEBUG) console.log(button) }
     clearInterval(salesforceInterval)
     if (button && message.salesforcechecked) {
-        if (DEBUG) { console.log("SET INTERVAL TRIGGERED") }
         salesforceSeconds = 0
         salesforceInterval = setInterval(() => {
             salesforceSeconds++
@@ -53,12 +56,10 @@ function gotMessage(message, sender, sendResponse) {
             date.setSeconds(message.salesforcevalue - salesforceSeconds)
             var result = date.getMinutes() + 'm\n' + date.getSeconds() + 's'
             button.innerHTML = result
-            if (salesforceSeconds == parseInt(message.salesforcevalue)) { button.click(); salesforceSeconds = 0; console.log("REFRESH TRIGGERED"); }
+            if (salesforceSeconds == parseInt(message.salesforcevalue)) { button.click(); salesforceSeconds = 0; }
         }, 1000)
     } else if (button && !message.salesforcechecked) {
-        if (DEBUG) { console.log("CLEAR INTERVAL TRIGGERED") }
         button.innerHTML = "🐸"
-
         clearInterval(salesforceInterval)
         salesforceSeconds = 0
     }

@@ -1,117 +1,164 @@
-//Regular ES6 imports aren't working, so I'm using this stupid import function instead. 
-let module = import("../shared.js").then(shared => {
+document.getElementById("button-support").addEventListener("click", function (e) {
+    chrome.tabs.create({ url: '../oninstall/oninstall.html' })
+})
 
-    let state = {
-        checked: false,
-        value: null,
-        tabId: null,
-        salesforcechecked: false,
-        salesforcevalue: null,
-    }
+// chrome.tabs.onCreated.addListener(function (tab) {})
+let states = {}
 
-    document.getElementById("button-support").addEventListener("click", function (e) {
-        chrome.tabs.create({ url: '../oninstall/oninstall.html' });
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
-
-        state = await shared.loadState(state);
-        try {
-            document.getElementById('refresh-tab-checkbox').checked = state.checked;
-            document.getElementById('refresh-tab-seconds').value = state.value;
-            document.getElementById('refresh-salesforce-checkbox').checked = state.salesforcechecked;
-            document.getElementById('refresh-salesforce-seconds').value = state.salesforcevalue;
-            update(state);
-        } catch (e) { console.warn(e) }
-
-    })
-
-    async function update() {
-        const responseTabID = await shared.getTabID();
-        state = Object.assign(state, {
-            tabId: responseTabID
-        })
-        await shared.saveState(state)
-        chrome.tabs.sendMessage(responseTabID, state)
-    }
-
-    // * * * * * * *
-    // REEEfresh Tab
-    // * * * * * * *
-    document.getElementById("refresh-tab-checkbox").addEventListener("change", function (e) {
-
-        document.getElementById("refresh-salesforce-checkbox").checked = false;
-
-        state = Object.assign(state, {
-            checked: this.checked,
-            salesforcechecked: false
-        })
-
-        update()
-    })
-
-    document.getElementById("refresh-tab-seconds").addEventListener("change", function (e) {
-
-        document.getElementById("feedback").innerHTML = formatSeconds(this.value)
-        state = Object.assign(state, {
-            value: this.value
-        })
-        update()
-    })
-
-    document.getElementById("refresh-tab-button").addEventListener("click", function (e) {
-        state = Object.assign(state, {
-            checked: document.getElementById("refresh-tab-checkbox").checked,
-            value: document.getElementById("refresh-tab-seconds").value
-        })
-        update()
-    })
-
-    // * * * * * * * * * * *
-    // REEEfresh Salesforce
-    // * * * * * * * * * * *
-    document.getElementById("refresh-salesforce-checkbox").addEventListener("change", function (e) {
-
-        document.getElementById("refresh-tab-checkbox").checked = false;
-        state = Object.assign(state, {
+document.addEventListener('DOMContentLoaded', () => {
+    ; (async () => {
+        //Firstly, get the tab ID
+        let queryOptions = { active: true, lastFocusedWindow: true };
+        let [tab] = await chrome.tabs.query(queryOptions);
+        let id = tab.id;
+        //Secondly, check if the loaded state is an empty object
+        let temp = await loadState(states[id]);
+        if (Object.keys(temp).length !== 0) states = { ...states[id], ...temp };
+        //Thirdly, if the loaded state was an empty object, initialize it
+        states[id] ??= {
             checked: false,
-            salesforcechecked: this.checked
-        })
-        update()
-    });
+            value: 60,
+            salesforcechecked: false,
+            salesforcevalue: 60
+        }
+        //Lastly, update the DOM
+        document.getElementById('refresh-tab-checkbox').checked = states[id].checked
+        document.getElementById('refresh-tab-seconds').value = states[id].value
+        document.getElementById('refresh-salesforce-checkbox').checked = states[id].salesforcechecked
+        document.getElementById('refresh-salesforce-seconds').value = states[id].salesforcevalue
+    })();
 
-    document.getElementById("refresh-salesforce-seconds").addEventListener("change", function (e) {
-        document.getElementById("feedback").innerHTML = formatSeconds(this.value)
-        state = Object.assign(state, {
-            salesforcevalue: this.value
-        })
-        update();
+})
+
+// * * * * * * *
+// REEEfresh Tab
+// * * * * * * *
+document.getElementById("refresh-tab-checkbox").addEventListener("change", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        checked: this.checked,
+        salesforcechecked: false
     })
+    document.getElementById("refresh-salesforce-checkbox").checked = false
+    update()
+})
 
-    document.getElementById("refresh-salesforce-button").addEventListener("click", function (e) {
-        state = Object.assign(state, {
-            salesforcechecked: document.getElementById("refresh-salesforce-checkbox").checked,
-            salesforcevalue: document.getElementById("refresh-salesforce-seconds").value
-        })
-        update()
-    });
+document.getElementById("refresh-tab-seconds").addEventListener("change", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        //value: (this.value == '') ? 0 : this.value
+        value: this.value
+    })
+    document.getElementById("feedback").innerHTML = formatSeconds(this.value)
+    update()
+})
 
-    function formatSeconds(d) {
-        var h = Math.floor(d / 3600);
-        var m = Math.floor(d % 3600 / 60);
-        var s = Math.floor(d % 3600 % 60);
+document.getElementById("refresh-tab-button").addEventListener("click", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        checked: document.getElementById("refresh-tab-checkbox").checked,
+        value: document.getElementById("refresh-tab-seconds").value
+    })
+    update()
+})
 
-        var hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
-        var mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
-        var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+// * * * * * * * * * * *
+// REEEfresh Salesforce
+// * * * * * * * * * * *
+document.getElementById("refresh-salesforce-checkbox").addEventListener("change", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        checked: false,
+        salesforcechecked: this.checked
+    })
+    document.getElementById("refresh-tab-checkbox").checked = false
+    update()
+})
 
-        var output = "Refresh every "
-        output += (hDisplay.length > 0) ? hDisplay : ""
-        output += (hDisplay.length > 0 && mDisplay.length > 0) ? ", " : ""
-        output += (mDisplay.length > 0) ? mDisplay : ""
-        output += (mDisplay.length > 0 && sDisplay.length > 0) ? ", " : ""
-        output += (sDisplay.length > 0) ? sDisplay : ""
-        return output;
+document.getElementById("refresh-salesforce-seconds").addEventListener("change", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        //salesforcevalue: (this.value == '') ? 0 : this.value
+        salesforcevalue: this.value
+    })
+    document.getElementById("feedback").innerHTML = formatSeconds(this.value)
+    update()
+})
+
+document.getElementById("refresh-salesforce-button").addEventListener("click", async function (e) {
+    const id = await getTabID()
+    states[id] = Object.assign(states[id], {
+        salesforcechecked: document.getElementById("refresh-salesforce-checkbox").checked,
+        salesforcevalue: document.getElementById("refresh-salesforce-seconds").value
+    })
+    update()
+})
+
+function formatSeconds(d) {
+    var h = Math.floor(d / 3600)
+    var m = Math.floor(d % 3600 / 60)
+    var s = Math.floor(d % 3600 % 60)
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : ""
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : ""
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : ""
+
+    var output = "Refresh every "
+    output += (hDisplay.length > 0) ? hDisplay : ""
+    output += (hDisplay.length > 0 && mDisplay.length > 0) ? ", " : ""
+    output += (mDisplay.length > 0) ? mDisplay : ""
+    output += (mDisplay.length > 0 && sDisplay.length > 0) ? ", " : ""
+    output += (sDisplay.length > 0) ? sDisplay : ""
+    return output
+}
+
+async function update() {
+
+    try {
+        await saveState(states);
+        const tabId = await getTabID()
+        chrome.tabs.sendMessage(tabId, states[tabId]);
+    } catch (e) {
+        console.warn(e)
     }
+}
 
-});
+//Below are all the functions that would otherwise be in shared.js if ES6 imports were working properly:
+
+async function getTabID() {
+    return new Promise((resolve, reject) => {
+        try {
+            chrome.tabs.query({
+                active: true, currentWindow: true
+            }, function (tabs) {
+                resolve(tabs[0].id)
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+async function loadState(key) {
+    return new Promise((resolve, reject) => {
+        try {
+            chrome.storage.local.get(key, function (value) {
+                resolve(value)
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+async function saveState(key) {
+    return new Promise((resolve, reject) => {
+        try {
+            chrome.storage.local.set(key, function () {
+                resolve()
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
